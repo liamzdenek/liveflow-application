@@ -38,3 +38,6 @@ rule: do not hardcode AWS resource names, use !Get/!GetAtt equivlaents in CDK in
 rule: use "npx nx ..." commands for everything. Do not manually invoke CDK or any other tool, do not use "npm" instead. You must set up dependencies in project.json (eg, deploy properly builds all packages first)
 rule: when orchestrating subtasks, you must always instruct the subtask to review relevant memory bank files (list the files that you believe are relevant), review relevant source code (list the files), and tell it to update the memory bank when it's complete
 rule: NEVER write a stub implementation. NEVER mock a response in the event of an error. NEVER design a fallback method; just throw an exception.
+rule: to deploy, you must always use "npx nx run infrastructure:deploy"
+rule: to build, you must always use "npx nx build [package name]"
+rule: always generate a favicon.svg and a <title> when setting up the UI for the first time.

@@ -1,0 +1,79 @@
+.tableContainer {
+  border: 3px solid #000000;
+  background-color: #ffffff;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: monospace;
+}
+
+.headerRow {
+  background-color: #f1f5f9;
+  border-bottom: 2px solid #000000;
+}
+
+.headerCell {
+  padding: 1rem;
+  text-align: left;
+  font-weight: bold;
+  color: #1e293b;
+  white-space: nowrap;
+}
+
+.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.sortable:hover {
+  background-color: #e2e8f0;
+}
+
+.dataRow {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.dataRow:hover {
+  background-color: #f8fafc;
+}
+
+.dataCell {
+  padding: 0.75rem 1rem;
+  color: #1e293b;
+  white-space: nowrap;
+}
+
+.amountCell {
+  font-weight: bold;
+  text-align: right;
+}
+
+.riskLow {
+  color: #16a34a;
+  font-weight: bold;
+}
+
+.riskMedium {
+  color: #d97706;
+  font-weight: bold;
+}
+
+.riskHigh {
+  color: #dc2626;
+  font-weight: bold;
+}
+
+.riskUnknown {
+  color: #64748b;
+  font-weight: bold;
+}
+
+.emptyState {
+  padding: 3rem;
+  text-align: center;
+  color: #64748b;
+  font-style: italic;
+}

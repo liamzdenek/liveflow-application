@@ -158,15 +158,58 @@
 ### Must-Have Features
 - ⏳ **Transaction Display**: All transactions visible with filtering
 - ⏳ **Anomaly Detection**: Working IsolationForest with risk levels
-- ⏳ **Transaction Creation**: Manual transaction entry working
-- ⏳ **Real-time Updates**: Immediate balance and data updates
-- ⏳ **AWS Deployment**: Live, accessible dashboard
+- ✅ **Transaction Creation**: Manual transaction entry working - POST /transactions endpoint fully functional
+- ✅ **Real-time Updates**: Immediate balance and data updates - Account balances update correctly
+- ✅ **AWS Deployment**: Live, accessible dashboard
 
 ### Nice-to-Have Features
 - ⏳ **Advanced Filtering**: Date ranges, transaction types
 - ⏳ **Trend Visualization**: Charts showing anomaly patterns over time
 - ⏳ **Account Health**: Risk level indicators per account
 - ⏳ **Export Functionality**: Download transaction data
+## Critical Issue Resolution
+
+### POST /transactions Body Parsing Issue ✅ RESOLVED
+**Issue**: POST /transactions endpoint was receiving all request body fields as `undefined`, causing validation failures despite proper `express.json()` middleware configuration.
+
+**Root Cause**: serverless-http library was not properly integrating with Express.js JSON body parsing. Request bodies were being passed as Buffer objects instead of parsed JSON, bypassing Express middleware.
+
+**Investigation Process**:
+1. Enhanced debug logging revealed `body: <Buffer 7b 0a 20 20...>` instead of parsed JSON
+2. Multiple serverless-http configuration attempts failed to resolve the issue
+3. Identified that Express middleware was not receiving properly parsed request bodies
+
+**Solution**: Added Buffer-to-JSON conversion middleware specifically for POST/PUT/PATCH requests:
+```typescript
+// Buffer-to-JSON conversion middleware for serverless-http compatibility
+app.use((req, res, next) => {
+  // Only process requests that have bodies and are POST/PUT/PATCH methods
+  if (req.body && Buffer.isBuffer(req.body) && ['POST', 'PUT', 'PATCH'].includes(req.method)) {
+    try {
+      const bodyString = req.body.toString('utf8');
+      req.body = JSON.parse(bodyString);
+      console.log(`Converted Buffer to JSON:`, req.body);
+    } catch (error) {
+      console.error(`Failed to parse Buffer as JSON:`, error);
+      return res.status(400).json({
+        error: 'Invalid JSON format',
+        timestamp: new Date().toISOString()
+      });
+    }
+  }
+  next();
+});
+```
+
+**Verification**:
+- ✅ POST /transactions now successfully creates transactions
+- ✅ Request body validation working correctly
+- ✅ Account balances update properly (verified: 23,811.99 → 24,311.99 after $500 deposit)
+- ✅ GET endpoints unaffected by middleware changes
+- ✅ Complete transaction response with all required fields
+
+**Technical Learning**: In serverless environments with serverless-http, Express middleware may not receive properly parsed request bodies. Custom middleware is needed to bridge the gap between serverless request handling and Express.js expectations.
+
 
 ## Known Issues & Risks
 

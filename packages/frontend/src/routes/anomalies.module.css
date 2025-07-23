@@ -1,0 +1,68 @@
+.container {
+  min-height: 80vh;
+}
+
+.pageTitle {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #1e293b;
+  margin-bottom: 2rem;
+  letter-spacing: 0.05em;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+  font-size: 1.25rem;
+  color: #64748b;
+}
+
+.error {
+  background-color: #fef2f2;
+  border: 3px solid #dc2626;
+  color: #dc2626;
+  padding: 1rem;
+  margin: 1rem 0;
+  font-weight: bold;
+}
+
+.statusBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background-color: #ffffff;
+  border: 3px solid #000000;
+}
+
+.status {
+  font-weight: bold;
+  color: #1e293b;
+}
+
+.statusActive {
+  color: #16a34a;
+}
+
+.runButton {
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: 3px solid #000000;
+  color: #1e293b;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.runButton:hover:not(:disabled) {
+  background-color: #2563eb;
+  color: #ffffff;
+}
+
+.runButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

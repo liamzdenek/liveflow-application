@@ -1,5 +1,6 @@
 import express from 'express';
 import serverless from 'serverless-http';
+import cors from 'cors';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, ScanCommand, PutCommand, GetCommand, UpdateCommand, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { 
@@ -34,8 +35,46 @@ const docClient = DynamoDBDocumentClient.from(dynamoClient);
 
 const app = express();
 
+// Enable CORS for all routes
+app.use(cors({
+  origin: '*', // Allow all origins
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: [
+    'Content-Type',
+    'Authorization',
+    'X-Api-Key',
+    'X-Amz-Date',
+    'X-Amz-Security-Token',
+    'X-Amz-User-Agent',
+    'Accept',
+    'Origin',
+    'Referer'
+  ],
+  credentials: false
+}));
+
 // Middleware for JSON parsing
 app.use(express.json());
+
+// Buffer-to-JSON conversion middleware for serverless-http compatibility
+app.use((req, res, next) => {
+  // Only process requests that have bodies and are POST/PUT/PATCH methods
+  if (req.body && Buffer.isBuffer(req.body) && ['POST', 'PUT', 'PATCH'].includes(req.method)) {
+    try {
+      const bodyString = req.body.toString('utf8');
+      req.body = JSON.parse(bodyString);
+      console.log(`[${req.headers['x-request-id'] || 'no-req-id'}] Converted Buffer to JSON:`, req.body);
+    } catch (error) {
+      console.error(`[${req.headers['x-request-id'] || 'no-req-id'}] Failed to parse Buffer as JSON:`, error);
+      res.status(400).json({
+        error: 'Invalid JSON format',
+        timestamp: new Date().toISOString()
+      });
+      return;
+    }
+  }
+  next();
+});
 
 // Comprehensive debug logging middleware for all requests/responses (per rule 19)
 app.use((req, res, next) => {
@@ -48,6 +87,11 @@ app.use((req, res, next) => {
     headers: req.headers,
     query: req.query,
     body: req.body,
+    bodyType: typeof req.body,
+    bodyStringified: JSON.stringify(req.body),
+    rawBodyLength: req.body ? Object.keys(req.body).length : 0,
+    contentType: req.get('Content-Type'),
+    contentLength: req.get('Content-Length'),
     timestamp: new Date().toISOString(),
     userAgent: req.get('User-Agent'),
     ip: req.ip
@@ -500,8 +544,40 @@ app.use((req, res) => {
   });
 });
 
-// Export serverless handler (per rule 34)
-export const handler = serverless(app);
+// Export serverless handler with explicit body parsing configuration (per rule 34)
+export const handler = serverless(app, {
+  // Ensure binary media types are handled correctly
+  binary: false,
+  // Enable request/response transformation for better Lambda integration
+  request: (request: any, event: any, context: any) => {
+    // Ensure the request body is properly parsed for JSON content
+    if (event.headers && event.headers['content-type']?.includes('application/json')) {
+      try {
+        let bodyString = event.body;
+        
+        // If body is base64 encoded (which can happen in Lambda), decode it
+        if (event.isBase64Encoded && event.body) {
+          bodyString = Buffer.from(event.body, 'base64').toString('utf-8');
+          event.isBase64Encoded = false;
+        }
+        
+        // Ensure the body is a string so Express can parse it
+        if (bodyString && typeof bodyString === 'string') {
+          try {
+            const parsedBody = JSON.parse(bodyString);
+            // Keep it as a string for Express to parse
+            event.body = bodyString;
+            console.log('Successfully validated request body JSON:', parsedBody);
+          } catch (parseError) {
+            console.error('Failed to parse JSON body:', parseError, 'Raw body:', bodyString);
+          }
+        }
+      } catch (error) {
+        console.error('Error processing request body:', error);
+      }
+    }
+  }
+});
 
 // Export app for testing
 export { app };

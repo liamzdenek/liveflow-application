@@ -4,6 +4,7 @@ import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as nodejs from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
 import * as s3 from 'aws-cdk-lib/aws-s3';
+import * as s3deploy from 'aws-cdk-lib/aws-s3-deployment';
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
 import * as events from 'aws-cdk-lib/aws-events';
@@ -157,7 +158,18 @@ export class LiveflowStack extends cdk.Stack {
       defaultCorsPreflightOptions: {
         allowOrigins: apigateway.Cors.ALL_ORIGINS,
         allowMethods: apigateway.Cors.ALL_METHODS,
-        allowHeaders: ['Content-Type', 'X-Amz-Date', 'Authorization', 'X-Api-Key', 'X-Amz-Security-Token'],
+        allowHeaders: [
+          'Content-Type',
+          'X-Amz-Date',
+          'Authorization',
+          'X-Api-Key',
+          'X-Amz-Security-Token',
+          'X-Amz-User-Agent',
+          'Accept',
+          'Origin',
+          'Referer'
+        ],
+        allowCredentials: false,
       },
     });
 
@@ -250,6 +262,18 @@ export class LiveflowStack extends cdk.Stack {
           responsePagePath: '/index.html', // SPA routing support
         },
       ],
+    });
+
+    // =============================================================================
+    // S3 Bucket Deployment
+    // =============================================================================
+
+    // Deploy frontend assets to S3 bucket
+    new s3deploy.BucketDeployment(this, 'FrontendDeployment', {
+      sources: [s3deploy.Source.asset(path.join(gitRoot, 'dist/packages/frontend'))],
+      destinationBucket: frontendBucket,
+      distribution,
+      distributionPaths: ['/*'], // Invalidate all CloudFront cache
     });
 
     // =============================================================================

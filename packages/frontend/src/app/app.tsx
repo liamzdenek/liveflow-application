@@ -1,13 +1,18 @@
-// Uncomment this line to use CSS modules
-// import styles from './app.module.css';
-import NxWelcome from './nx-welcome';
+import { RouterProvider, createRouter } from '@tanstack/react-router'
+import { routeTree } from '../routeTree.gen'
 
-export function App() {
-  return (
-    <div>
-      <NxWelcome title="frontend" />
-    </div>
-  );
+// Create a new router instance
+const router = createRouter({ routeTree })
+
+// Register the router instance for type safety
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router
+  }
 }
 
-export default App;
+export function App() {
+  return <RouterProvider router={router} />
+}
+
+export default App

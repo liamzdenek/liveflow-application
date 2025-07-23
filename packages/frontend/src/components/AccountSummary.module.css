@@ -1,0 +1,68 @@
+.container {
+  margin-top: 2rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1e293b;
+  margin-bottom: 1rem;
+  letter-spacing: 0.05em;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.card {
+  background-color: #ffffff;
+  border: 3px solid #000000;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.accountId {
+  font-weight: bold;
+  font-size: 1rem;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.balance {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.risk {
+  font-size: 0.875rem;
+  font-weight: bold;
+}
+
+.riskLow {
+  color: #16a34a;
+}
+
+.riskMedium {
+  color: #d97706;
+}
+
+.riskHigh {
+  color: #dc2626;
+}
+
+.riskUnknown {
+  color: #64748b;
+}
+
+.emptyState {
+  grid-column: 1 / -1;
+  padding: 2rem;
+  text-align: center;
+  color: #64748b;
+  font-style: italic;
+}

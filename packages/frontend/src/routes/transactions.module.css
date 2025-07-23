@@ -1,0 +1,103 @@
+.container {
+  min-height: 80vh;
+}
+
+.pageTitle {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #1e293b;
+  margin-bottom: 2rem;
+  letter-spacing: 0.05em;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+  font-size: 1.25rem;
+  color: #64748b;
+}
+
+.error {
+  background-color: #fef2f2;
+  border: 3px solid #dc2626;
+  color: #dc2626;
+  padding: 1rem;
+  margin: 1rem 0;
+  font-weight: bold;
+}
+
+.filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filterSelect {
+  padding: 0.75rem 1rem;
+  border: 3px solid #000000;
+  background-color: #ffffff;
+  color: #1e293b;
+  font-weight: bold;
+  min-width: 150px;
+  cursor: pointer;
+}
+
+.filterSelect:hover {
+  background-color: #f1f5f9;
+}
+
+.applyButton {
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: 3px solid #000000;
+  color: #1e293b;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.applyButton:hover:not(:disabled) {
+  background-color: #2563eb;
+  color: #ffffff;
+}
+
+.applyButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination {
+  margin: 2rem 0;
+  text-align: center;
+  color: #64748b;
+  font-weight: bold;
+}
+
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  background-color: #f8fafc;
+  border: 3px solid #e2e8f0;
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.placeholder h3 {
+  color: #475569;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.placeholder p {
+  color: #64748b;
+  font-size: 1rem;
+  margin: 0;
+}
