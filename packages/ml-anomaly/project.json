@@ -32,8 +32,9 @@
       "options": {
         "outputPath": "{projectRoot}/dist",
         "publish": false,
-        "lockedVersions": true,
-        "bundleLocalDependencies": true
+        "lockedVersions": false,
+        "bundleLocalDependencies": true,
+        "pythonInterpreter": "/etc/profiles/per-user/q/bin/python3.13"
       },
       "cache": true
     },
@@ -50,7 +51,7 @@
   "tags": [],
   "release": {
     "version": {
-      "generator": "@nxlv/python:release-version"
+      "versionActions": "@nxlv/python/src/release/version-actions"
     }
   }
 }

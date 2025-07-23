@@ -1,6 +1,7 @@
 import * as cdk from 'aws-cdk-lib';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as nodejs from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
@@ -10,10 +11,29 @@ import * as targets from 'aws-cdk-lib/aws-events-targets';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as logs from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
+import * as path from 'path';
+import * as fs from 'fs';
+
+// Function to find the git root directory
+function findGitRoot(startDir: string = __dirname): string {
+  let currentDir = startDir;
+  
+  while (currentDir !== path.dirname(currentDir)) {
+    if (fs.existsSync(path.join(currentDir, '.git'))) {
+      return currentDir;
+    }
+    currentDir = path.dirname(currentDir);
+  }
+  
+  throw new Error('Git root not found');
+}
 
 export class LiveflowStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
+
+    // Find git root for proper path resolution
+    const gitRoot = findGitRoot();
 
     // =============================================================================
     // DynamoDB Tables
@@ -66,36 +86,49 @@ export class LiveflowStack extends cdk.Stack {
       ACCOUNTS_TABLE_NAME: accountsTable.tableName,
       TRANSACTIONS_TABLE_NAME: transactionsTable.tableName,
       ANOMALIES_TABLE_NAME: anomaliesTable.tableName,
+      ACCOUNTS_TABLE_ARN: accountsTable.tableArn,
+      TRANSACTIONS_TABLE_ARN: transactionsTable.tableArn,
+      ANOMALIES_TABLE_ARN: anomaliesTable.tableArn,
       REGION: this.region,
     };
 
     // API Lambda Function (TypeScript with serverless-http)
-    const apiFunction = new lambda.Function(this, 'ApiFunction', {
+    const apiFunction = new nodejs.NodejsFunction(this, 'ApiFunction', {
+      entry: path.join(gitRoot, 'packages/api/src/main.ts'),
       runtime: lambda.Runtime.NODEJS_20_X,
-      handler: 'index.handler',
-      code: lambda.Code.fromAsset('dist/packages/api'),
+      handler: 'handler',
       environment: commonEnvVars,
       timeout: cdk.Duration.seconds(30),
       memorySize: 512,
       logRetention: logs.RetentionDays.ONE_WEEK,
+      bundling: {
+        externalModules: [],
+        minify: true,
+        sourceMap: true,
+      },
     });
 
     // Data Generation Lambda Function (TypeScript)
-    const dataGenerationFunction = new lambda.Function(this, 'DataGenerationFunction', {
+    const dataGenerationFunction = new nodejs.NodejsFunction(this, 'DataGenerationFunction', {
+      entry: path.join(gitRoot, 'packages/data-generation/src/main.ts'),
       runtime: lambda.Runtime.NODEJS_20_X,
-      handler: 'index.handler',
-      code: lambda.Code.fromAsset('dist/packages/data-generation'),
+      handler: 'handler',
       environment: commonEnvVars,
       timeout: cdk.Duration.minutes(5),
       memorySize: 256,
       logRetention: logs.RetentionDays.ONE_WEEK,
+      bundling: {
+        externalModules: [],
+        minify: true,
+        sourceMap: true,
+      },
     });
 
     // ML Anomaly Detection Lambda Function (Python)
     const mlAnomalyFunction = new lambda.Function(this, 'MlAnomalyFunction', {
       runtime: lambda.Runtime.PYTHON_3_11,
-      handler: 'index.handler',
-      code: lambda.Code.fromAsset('dist/packages/ml-anomaly'),
+      handler: 'handler.lambda_handler',
+      code: lambda.Code.fromAsset(path.join(gitRoot, 'packages/ml-anomaly')),
       environment: commonEnvVars,
       timeout: cdk.Duration.minutes(15),
       memorySize: 1024,
