@@ -13,6 +13,60 @@ export const CreateTransactionSchema = z.object({
 
 export type CreateTransactionInput = z.infer<typeof CreateTransactionSchema>;
 
+// Additional Zod schemas for validation
+export const AccountSchema = z.object({
+  accountId: z.string(),
+  accountType: z.string(),
+  balance: z.number(),
+  lastTransactionDate: z.string(),
+  riskLevel: z.string(),
+  riskScore: z.number(),
+  isStale: z.boolean(),
+  createdAt: z.string(),
+  updatedAt: z.string()
+});
+
+export const TransactionSchema = z.object({
+  transactionId: z.string(),
+  accountId: z.string(),
+  transactionType: z.string(),
+  amount: z.number(),
+  balanceAfter: z.number(),
+  description: z.string().optional(),
+  timestamp: z.string(),
+  riskScore: z.number().optional(),
+  riskLevel: z.string().optional(),
+  isAnomaly: z.boolean(),
+  createdAt: z.string()
+});
+
+export const AnomalySchema = z.object({
+  anomalyId: z.string(),
+  transactionId: z.string(),
+  accountId: z.string(),
+  riskScore: z.number(),
+  riskLevel: z.string(),
+  detectedAt: z.string(),
+  modelVersion: z.string(),
+  features: z.object({
+    amount: z.number(),
+    hourOfDay: z.number(),
+    dayOfWeek: z.number(),
+    balanceBefore: z.number(),
+    transactionVelocity: z.number()
+  })
+});
+
+export const AnomalyStatsSchema = z.object({
+  totalAnomalies: z.number(),
+  highRisk: z.number(),
+  mediumRisk: z.number(),
+  lowRisk: z.number(),
+  lastDetectionRun: z.string()
+});
+
+export const CreateTransactionRequestSchema = CreateTransactionSchema;
+
 // =============================================================================
 // API Response Types (Frontend Requirements)
 // =============================================================================

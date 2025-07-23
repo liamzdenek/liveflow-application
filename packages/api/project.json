@@ -14,7 +14,7 @@
         "platform": "node",
         "outputPath": "dist/packages/api",
         "format": ["cjs"],
-        "bundle": false,
+        "bundle": true,
         "main": "packages/api/src/main.ts",
         "tsConfig": "packages/api/tsconfig.app.json",
         "assets": ["packages/api/src/assets"],
