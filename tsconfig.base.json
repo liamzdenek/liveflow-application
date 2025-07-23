@@ -15,7 +15,11 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@liveflow/shared": ["packages/shared/src/index.ts"]
+      "@liveflow/shared": ["packages/shared/src/index.ts"],
+      "@liveflow/api": ["packages/api/src/index.ts"],
+      "@liveflow/data-generation": ["packages/data-generation/src/index.ts"],
+      "@liveflow/infrastructure": ["packages/infrastructure/src/index.ts"],
+      "@liveflow/frontend": ["packages/frontend/src/main.tsx"]
     },
     "strict": true,
     "noImplicitOverride": true,

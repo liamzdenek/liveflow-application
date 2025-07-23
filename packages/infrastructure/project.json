@@ -1,0 +1,99 @@
+{
+  "name": "infrastructure",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/infrastructure/src",
+  "projectType": "application",
+  "tags": [],
+  "implicitDependencies": ["shared"],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/packages/infrastructure",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "packages/infrastructure/src/main.ts",
+        "tsConfig": "packages/infrastructure/tsconfig.app.json",
+        "assets": ["packages/infrastructure/src/assets"],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      }
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "infrastructure:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "infrastructure:build:development"
+        },
+        "production": {
+          "buildTarget": "infrastructure:build:production"
+        }
+      }
+    },
+    "deploy": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build", "^build"],
+      "options": {
+        "command": "cd packages/infrastructure && npx cdk deploy --require-approval never",
+        "cwd": "."
+      },
+      "configurations": {
+        "dev": {
+          "command": "cd packages/infrastructure && npx cdk deploy --context environment=dev --require-approval never"
+        },
+        "prod": {
+          "command": "cd packages/infrastructure && npx cdk deploy --context environment=prod --require-approval never"
+        }
+      }
+    },
+    "destroy": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd packages/infrastructure && npx cdk destroy --force",
+        "cwd": "."
+      }
+    },
+    "diff": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "cd packages/infrastructure && npx cdk diff",
+        "cwd": "."
+      }
+    },
+    "synth": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "cd packages/infrastructure && npx cdk synth",
+        "cwd": "."
+      }
+    }
+  }
+}

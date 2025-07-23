@@ -1,0 +1,40 @@
+rule: Implement a 12-Factor app, to the extent it can be done cloud natively (eg, use env vars for configuration at runtime)
+rule: pass location/arn of aws resources in to programs through environment variables. For front-end code, make the same environment variables available at build time
+rule: Do not implement fallback, ever. Either your main path works, or it fails and we log the failure.
+rule: Never write one-off scripts, always attach them to an `nx run` command
+rule: Use a nx monorepo
+rule: use React
+rule: Do not initialize the nx projects by writing files, instead, use the appropriate `nx generate` command.
+rule: Use typescript by default, but other instructions can override this
+rule: Use CSS modules, no tailwind CSS, no css framework
+rule: Always --save or --save-dev your dependencies
+rule: Design your infrastructure for AWS
+rule: Deploy using CDK. Use NodejsFunction primitive in CDK
+rule: put all monorepo packages inside of a `packages` directory
+rule: do not use playwright or other e2e testing, it's out of scope.
+rule: do not mock or bother with local development, we're going to use actual AWS deployments to test.
+rule: do not use CDK to compile javascript, compile outside of CDK and import the compiled artefacts.
+rule: Put all shared types in a shared package, do not import the frontend into the backend or vice-versa. If they both need something, it must be in shared.
+rule: use Zod for schema validation
+rule: always include debug logging, including requests and responses, so that we can better debug future issues
+rule: always include a health check endpoint so that we can confirm a service is starting correctly. Always include checks for dependencies in the health check, too.
+rule: do not use --routing in nx generate, that will use react router, we want tanstack router instead, so routing should be disabled in the generate command
+rule: always write the .gitignore before you start installing dependencies
+rule: use a single output `dist` directory at the root, and make a subfolder for each package.
+rule: use curl and the AWS CLI to test deployments
+rule: do NOT mark the aws sdk as external, it should be bundled.
+rule: after updating build configuration, you MUST clean the old build artifacts, rerun the build, AND validate that the artifacts were saved.
+rule: ALWAYS "sleep 10 && [command]" when checking cloudwatch logs.
+rule: save your operational learnings to runbook.md
+rule: use Origin Access Identity to connect Cloudfront to the frontend's s3 bucket.
+rule: you MUST NEVER generate placeholders in the middle of a program, always implement the FULL code or make the entire file a placeholder.
+rule: do not use --legacy-peer-deps without express approval, instead, you MUST fix the dependency conflict.
+rule: gitignore must include `.env` and `.env.*`
+rule: when designing user interfaces, create ASCII mockups of the interface
+rule: use serverless-http
+rule: use Dropbox Design-style UX. Flat design, no borders, no 3d effects, buttons are transparent with thick black borders to show the background color behind them. We embrace bold and vibrant colors, but also pastel colors.
+rule: use idempotent request/response values
+rule: do not hardcode AWS resource names, use !Get/!GetAtt equivlaents in CDK instead. Do not define a dynamodb table name, a lambda function name, etc etc. Let CDK generate it.
+rule: use "npx nx ..." commands for everything. Do not manually invoke CDK or any other tool, do not use "npm" instead. You must set up dependencies in project.json (eg, deploy properly builds all packages first)
+rule: when orchestrating subtasks, you must always instruct the subtask to review relevant memory bank files (list the files that you believe are relevant), review relevant source code (list the files), and tell it to update the memory bank when it's complete
+rule: NEVER write a stub implementation. NEVER mock a response in the event of an error. NEVER design a fallback method; just throw an exception.

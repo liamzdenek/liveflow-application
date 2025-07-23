@@ -1,0 +1,60 @@
+{
+  "name": "data-generation",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/data-generation/src",
+  "projectType": "application",
+  "tags": [],
+  "implicitDependencies": ["shared"],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/packages/data-generation",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "packages/data-generation/src/main.ts",
+        "tsConfig": "packages/data-generation/tsconfig.app.json",
+        "assets": ["packages/data-generation/src/assets"],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      }
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "data-generation:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "data-generation:build:development"
+        },
+        "production": {
+          "buildTarget": "data-generation:build:production"
+        }
+      }
+    }
+  }
+}
