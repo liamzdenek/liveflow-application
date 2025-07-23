@@ -76,12 +76,40 @@ AWS_PROFILE=lz-demos aws lambda invoke \
 
 ## Common Issues and Solutions
 
+### DynamoDB Float Type Error
+**Error**: `"Failed to update transaction [...]: Float types are not supported. Use Decimal types instead."`
+
+**Root Cause**: DynamoDB requires `Decimal` types for numeric values, not Python `float` types
+
+**Solution**: Import `Decimal` from Python's `decimal` module and convert floats before DynamoDB operations
+```python
+from decimal import Decimal
+
+# Convert floats to Decimal when storing in DynamoDB
+self.transactions_table.update_item(
+    Key={'transactionId': transaction_id},
+    UpdateExpression='SET riskScore = :score, riskLevel = :level, isAnomaly = :anomaly',
+    ExpressionAttributeValues={
+        ':score': Decimal(str(risk_score)),  # Convert float to Decimal
+        ':level': risk_level,
+        ':anomaly': is_anomaly
+    }
+)
+```
+
+**Resolution Steps**:
+1. Add `from decimal import Decimal` to imports
+2. Convert all float values to `Decimal(str(float_value))` before DynamoDB operations
+3. Update both `update_transaction_risk` and `save_anomaly` methods
+4. Redeploy: `npx nx deploy infrastructure`
+5. Test with AWS CLI invoke to verify no errors
+
 ### Python Lambda Handler Error
 **Error**: `"Unable to import module 'handler': No module named 'handler'"`
 
 **Root Cause**: Incorrect handler path in CDK configuration
 
-**Solution**: 
+**Solution**:
 ```typescript
 // In packages/infrastructure/src/stacks/liveflow-stack.ts
 handler: 'ml_anomaly.handler.lambda_handler', // Correct

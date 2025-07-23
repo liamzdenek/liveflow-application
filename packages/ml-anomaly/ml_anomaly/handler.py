@@ -265,7 +265,7 @@ class DynamoDBClient:
                 Key={'transactionId': transaction_id},
                 UpdateExpression='SET riskScore = :score, riskLevel = :level, isAnomaly = :anomaly',
                 ExpressionAttributeValues={
-                    ':score': risk_score,
+                    ':score': Decimal(str(risk_score)),
                     ':level': risk_level,
                     ':anomaly': is_anomaly
                 }
@@ -368,15 +368,15 @@ def process_anomaly_detection(event: Dict[str, Any]) -> Dict[str, Any]:
                             'anomalyId': f"anom-{uuid.uuid4().hex}",
                             'transactionId': txn['transactionId'],
                             'accountId': account_id,
-                            'riskScore': float(score),
+                            'riskScore': Decimal(str(score)),
                             'riskLevel': risk_level,
                             'detectedAt': datetime.now(timezone.utc).isoformat(),
                             'modelVersion': detector.model_version,
                             'features': {
-                                'amount': float(features_array[i][0]),
+                                'amount': Decimal(str(features_array[i][0])),
                                 'hourOfDay': int(features_array[i][1]),
                                 'dayOfWeek': int(features_array[i][2]),
-                                'balanceBefore': float(features_array[i][3]),
+                                'balanceBefore': Decimal(str(features_array[i][3])),
                                 'transactionVelocity': int(features_array[i][4])
                             }
                         }
