@@ -124,11 +124,11 @@ export class LiveflowStack extends cdk.Stack {
       },
     });
 
-    // ML Anomaly Detection Lambda Function (Python)
-    const mlAnomalyFunction = new lambda.Function(this, 'MlAnomalyFunction', {
-      runtime: lambda.Runtime.PYTHON_3_11,
-      handler: 'handler.lambda_handler',
-      code: lambda.Code.fromAsset(path.join(gitRoot, 'packages/ml-anomaly')),
+    // ML Anomaly Detection Lambda Function (Python Container)
+    const mlAnomalyFunction = new lambda.DockerImageFunction(this, 'MlAnomalyFunction', {
+      code: lambda.DockerImageCode.fromImageAsset(path.join(gitRoot, 'packages/ml-anomaly'), {
+        cmd: ['ml_anomaly.handler.lambda_handler'],
+      }),
       environment: commonEnvVars,
       timeout: cdk.Duration.minutes(15),
       memorySize: 1024,
@@ -291,5 +291,6 @@ export class LiveflowStack extends cdk.Stack {
       description: 'DynamoDB Anomalies Table',
       exportName: `${this.stackName}-AnomaliesTable`,
     });
+
   }
 }

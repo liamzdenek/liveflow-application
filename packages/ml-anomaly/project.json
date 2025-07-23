@@ -32,9 +32,37 @@
       "options": {
         "outputPath": "{projectRoot}/dist",
         "publish": false,
-        "lockedVersions": false,
+        "lockedVersions": true,
         "bundleLocalDependencies": true,
-        "pythonInterpreter": "/etc/profiles/per-user/q/bin/python3.13"
+        "keepBuildFolder": true
+      },
+      "cache": true
+    },
+    "lint": {
+      "executor": "@nxlv/python:ruff-check",
+      "outputs": [],
+      "options": {
+        "lintFilePatterns": ["ml_anomaly", "tests"]
+      },
+      "cache": true
+    },
+    "format": {
+      "executor": "@nxlv/python:ruff-format",
+      "outputs": [],
+      "options": {
+        "filePatterns": ["ml_anomaly", "tests"]
+      },
+      "cache": true
+    },
+    "test": {
+      "executor": "@nxlv/python:run-commands",
+      "outputs": [
+        "{workspaceRoot}/reports/{projectRoot}/unittests",
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
+      "options": {
+        "command": "uv run pytest tests/",
+        "cwd": "{projectRoot}"
       },
       "cache": true
     },
@@ -51,7 +79,7 @@
   "tags": [],
   "release": {
     "version": {
-      "versionActions": "@nxlv/python/src/release/version-actions"
+      "generator": "@nxlv/python:release-version"
     }
   }
 }

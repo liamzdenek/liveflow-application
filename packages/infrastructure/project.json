@@ -60,22 +60,22 @@
       "executor": "nx:run-commands",
       "dependsOn": ["build", "^build"],
       "options": {
-        "command": "cd packages/infrastructure && npx cdk deploy --require-approval never",
+        "command": "cd packages/infrastructure && AWS_PROFILE=lz-demos npx cdk deploy --require-approval never",
         "cwd": "."
       },
       "configurations": {
         "dev": {
-          "command": "cd packages/infrastructure && npx cdk deploy --context environment=dev --require-approval never"
+          "command": "cd packages/infrastructure && AWS_PROFILE=lz-demos npx cdk deploy --context environment=dev --require-approval never"
         },
         "prod": {
-          "command": "cd packages/infrastructure && npx cdk deploy --context environment=prod --require-approval never"
+          "command": "cd packages/infrastructure && AWS_PROFILE=lz-demos npx cdk deploy --context environment=prod --require-approval never"
         }
       }
     },
     "destroy": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cd packages/infrastructure && npx cdk destroy --force",
+        "command": "cd packages/infrastructure && AWS_PROFILE=lz-demos npx cdk destroy --force",
         "cwd": "."
       }
     },
@@ -83,7 +83,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "options": {
-        "command": "cd packages/infrastructure && npx cdk diff",
+        "command": "cd packages/infrastructure && AWS_PROFILE=lz-demos npx cdk diff",
         "cwd": "."
       }
     },
@@ -91,7 +91,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "options": {
-        "command": "cd packages/infrastructure && npx cdk synth",
+        "command": "cd packages/infrastructure && AWS_PROFILE=lz-demos npx cdk synth",
         "cwd": "."
       }
     }
