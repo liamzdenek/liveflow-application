@@ -8,7 +8,7 @@ import styles from './transactions.module.css'
 
 export const Route = createFileRoute('/')(({
   component: TransactionsPage,
-})
+}));
 
 function TransactionsPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
